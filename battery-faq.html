@@ -1,0 +1,235 @@
+<!-- wp:html -->
+<div class="battery-faq">
+
+  <style>
+    /* ===== 配色はここだけ変えればサイト全体の印象に合わせられます ===== */
+    .battery-faq{
+      --bf-main:#0f9b8e;        /* メインカラー */
+      --bf-main-dark:#0b7a70;   /* メイン濃いめ */
+      --bf-accent:#ffb020;      /* アクセント（電池＝電気のイメージ） */
+      --bf-ink:#1f2d32;         /* 本文の文字色 */
+      --bf-sub:#53666c;         /* 回答の文字色 */
+      --bf-line:#e3ecee;        /* 枠線 */
+      --bf-soft:#f3faf9;        /* 回答の背景 */
+      max-width:820px;
+      margin:0 auto;
+      color:var(--bf-ink);
+      font-family:inherit;
+      line-height:1.8;
+    }
+    .battery-faq *{box-sizing:border-box;}
+
+    /* ===== カード ===== */
+    .battery-faq .bf-item{
+      position:relative;
+      background:#fff;
+      border:1px solid var(--bf-line);
+      border-radius:14px;
+      margin:0 0 14px;
+      overflow:hidden;
+      box-shadow:0 1px 2px rgba(15,60,70,.05);
+      transition:box-shadow .25s ease, border-color .25s ease, transform .25s ease;
+    }
+    .battery-faq .bf-item:last-child{margin-bottom:0;}
+    .battery-faq .bf-item:hover{
+      border-color:#c9e2e0;
+      box-shadow:0 10px 26px rgba(15,60,70,.10);
+      transform:translateY(-1px);
+    }
+    .battery-faq .bf-item[open]{
+      border-color:#bfdedb;
+      box-shadow:0 10px 26px rgba(15,60,70,.10);
+    }
+    /* 開いたときに左側へ光るライン */
+    .battery-faq .bf-item::before{
+      content:"";
+      position:absolute; left:0; top:0; bottom:0; width:4px;
+      background:linear-gradient(180deg,var(--bf-main),var(--bf-accent));
+      transform:scaleY(0); transform-origin:top;
+      transition:transform .3s ease;
+    }
+    .battery-faq .bf-item[open]::before{transform:scaleY(1);}
+
+    /* ===== 質問（クリックする行） ===== */
+    .battery-faq .bf-q{
+      display:flex;
+      align-items:flex-start;
+      gap:12px;
+      padding:18px 20px;
+      cursor:pointer;
+      list-style:none;
+      font-size:1.02rem;
+      font-weight:700;
+      transition:background .2s ease;
+    }
+    .battery-faq .bf-q::-webkit-details-marker{display:none;}
+    .battery-faq .bf-q:hover{background:var(--bf-soft);}
+    .battery-faq .bf-q:focus-visible{
+      outline:3px solid rgba(15,155,142,.45);
+      outline-offset:-3px;
+    }
+
+    /* Q / A のバッジ */
+    .battery-faq .bf-badge{
+      flex:0 0 auto;
+      width:30px; height:30px;
+      display:grid; place-items:center;
+      border-radius:9px;
+      font-size:.88rem;
+      font-weight:700;
+      font-family:Arial,Helvetica,sans-serif;
+      letter-spacing:.02em;
+      line-height:1;
+    }
+    .battery-faq .bf-badge-q{
+      background:linear-gradient(135deg,var(--bf-main),var(--bf-main-dark));
+      color:#fff;
+      box-shadow:0 2px 6px rgba(15,155,142,.35);
+    }
+    .battery-faq .bf-badge-a{
+      background:#fff;
+      color:var(--bf-main-dark);
+      border:1.5px solid var(--bf-main);
+    }
+
+    .battery-faq .bf-q-text{flex:1 1 auto; padding-top:2px;}
+
+    /* 開閉アイコン（＋ ⇄ −） */
+    .battery-faq .bf-icon{
+      flex:0 0 auto;
+      position:relative;
+      width:26px; height:26px;
+      margin-top:2px;
+      border-radius:50%;
+      background:var(--bf-soft);
+      transition:background .25s ease, transform .3s ease;
+    }
+    .battery-faq .bf-item:hover .bf-icon{background:#e4f4f2;}
+    .battery-faq .bf-icon::before,
+    .battery-faq .bf-icon::after{
+      content:"";
+      position:absolute; top:50%; left:50%;
+      width:12px; height:2px;
+      border-radius:2px;
+      background:var(--bf-main-dark);
+      transform:translate(-50%,-50%);
+      transition:transform .3s ease, opacity .25s ease;
+    }
+    .battery-faq .bf-icon::after{transform:translate(-50%,-50%) rotate(90deg);}
+    .battery-faq .bf-item[open] .bf-icon{background:var(--bf-main);transform:rotate(180deg);}
+    .battery-faq .bf-item[open] .bf-icon::before,
+    .battery-faq .bf-item[open] .bf-icon::after{background:#fff;}
+    .battery-faq .bf-item[open] .bf-icon::after{opacity:0;transform:translate(-50%,-50%) rotate(0deg);}
+
+    /* ===== 回答 ===== */
+    .battery-faq .bf-a{
+      display:flex;
+      align-items:flex-start;
+      gap:12px;
+      margin:0 14px 16px;
+      padding:16px 18px;
+      background:var(--bf-soft);
+      border-radius:12px;
+      color:var(--bf-sub);
+      font-size:.97rem;
+    }
+    .battery-faq .bf-a p{margin:2px 0 0;}
+    .battery-faq .bf-item[open] .bf-a{animation:bfOpen .3s ease both;}
+    @keyframes bfOpen{
+      from{opacity:0; transform:translateY(-8px);}
+      to{opacity:1; transform:none;}
+    }
+
+    /* ===== スマホ ===== */
+    @media (max-width:600px){
+      .battery-faq .bf-q{padding:15px 15px; font-size:.97rem; gap:10px;}
+      .battery-faq .bf-badge{width:27px; height:27px; font-size:.82rem;}
+      .battery-faq .bf-a{margin:0 11px 13px; padding:14px 15px; font-size:.93rem;}
+    }
+
+    /* 動きを抑える設定の人への配慮 */
+    @media (prefers-reduced-motion:reduce){
+      .battery-faq .bf-item,
+      .battery-faq .bf-item::before,
+      .battery-faq .bf-icon,
+      .battery-faq .bf-icon::before,
+      .battery-faq .bf-icon::after{transition:none;}
+      .battery-faq .bf-item[open] .bf-a{animation:none;}
+      .battery-faq .bf-item:hover{transform:none;}
+    }
+  </style>
+
+  <details class="bf-item" name="battery-faq">
+    <summary class="bf-q">
+      <span class="bf-badge bf-badge-q">Q</span>
+      <span class="bf-q-text">電池の種類が分からなくても相談できますか？</span>
+      <span class="bf-icon" aria-hidden="true"></span>
+    </summary>
+    <div class="bf-a">
+      <span class="bf-badge bf-badge-a">A</span>
+      <p>はい、種類が分からない場合もご相談ください。電池の表示や形状が分かる写真をお送りいただけると確認がスムーズです。</p>
+    </div>
+  </details>
+
+  <details class="bf-item" name="battery-faq">
+    <summary class="bf-q">
+      <span class="bf-badge bf-badge-q">Q</span>
+      <span class="bf-q-text">液漏れしている電池でも処分できますか？</span>
+      <span class="bf-icon" aria-hidden="true"></span>
+    </summary>
+    <div class="bf-a">
+      <span class="bf-badge bf-badge-a">A</span>
+      <p>液漏れしている場合は、電池の種類や状態を事前にお知らせください。状態を確認したうえで対応についてご案内します。</p>
+    </div>
+  </details>
+
+  <details class="bf-item" name="battery-faq">
+    <summary class="bf-q">
+      <span class="bf-badge bf-badge-q">Q</span>
+      <span class="bf-q-text">家にたまった電池をまとめて処分できますか？</span>
+      <span class="bf-icon" aria-hidden="true"></span>
+    </summary>
+    <div class="bf-a">
+      <span class="bf-badge bf-badge-a">A</span>
+      <p>はい、複数の電池がある場合もご相談いただけます。種類や数量が分かる写真をお送りいただくと、お見積もりがスムーズです。</p>
+    </div>
+  </details>
+
+  <details class="bf-item" name="battery-faq">
+    <summary class="bf-q">
+      <span class="bf-badge bf-badge-q">Q</span>
+      <span class="bf-q-text">ほかの不用品と一緒に電池も処分できますか？</span>
+      <span class="bf-icon" aria-hidden="true"></span>
+    </summary>
+    <div class="bf-a">
+      <span class="bf-badge bf-badge-a">A</span>
+      <p>はい、ほかにも処分したいものがある場合は、電池とあわせてご相談ください。処分したいものの種類や数量をお知らせください。</p>
+    </div>
+  </details>
+
+  <details class="bf-item" name="battery-faq">
+    <summary class="bf-q">
+      <span class="bf-badge bf-badge-q">Q</span>
+      <span class="bf-q-text">電池が入ったままの家電やおもちゃも相談できますか？</span>
+      <span class="bf-icon" aria-hidden="true"></span>
+    </summary>
+    <div class="bf-a">
+      <span class="bf-badge bf-badge-a">A</span>
+      <p>はい、電池が入った家電やおもちゃについてもご相談いただけます。機器の種類や状態をお問い合わせ時にお知らせください。</p>
+    </div>
+  </details>
+
+  <details class="bf-item" name="battery-faq">
+    <summary class="bf-q">
+      <span class="bf-badge bf-badge-q">Q</span>
+      <span class="bf-q-text">ボタン電池にテープを貼ってから依頼する必要はありますか？</span>
+      <span class="bf-icon" aria-hidden="true"></span>
+    </summary>
+    <div class="bf-a">
+      <span class="bf-badge bf-badge-a">A</span>
+      <p>事前の作業が必要かどうかは、電池の種類や状態を確認したうえでご案内します。まずはそのままの状態が分かる写真をお送りください。</p>
+    </div>
+  </details>
+
+</div>
+<!-- /wp:html -->
